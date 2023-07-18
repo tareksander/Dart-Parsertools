@@ -1,0 +1,28 @@
+name: example
+description: A sample command-line application.
+version: 1.0.0
+
+environment:
+  sdk: ^3.0.6
+
+
+dependencies:
+  lexer_builder_runtime: any
+
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.21.0
+  # lexer_builder and build_runner have to be included as dev_dependencies.
+  # running `dart run build_runner build` generates the lexer again, use it after modifying the lexer annotations.
+  lexer_builder: any
+  build_runner: ^2.0.0
+
+
+dependency_overrides:
+  lexer_builder_runtime:
+    path:
+      ../../lexer_builder_runtime
+  lexer_builder:
+    path:
+      ..

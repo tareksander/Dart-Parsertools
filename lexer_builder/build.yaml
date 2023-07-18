@@ -1,0 +1,10 @@
+# Read about `build.yaml.old` at https://pub.dev/packages/build_config
+builders:
+  lexer:
+    import: "package:lexer_builder/builder.dart"
+    builder_factories: ["lexerBuilder"]
+    build_extensions: {".dart": ["lexer.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
+  
