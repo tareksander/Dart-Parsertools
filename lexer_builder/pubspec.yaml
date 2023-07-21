@@ -15,7 +15,7 @@ dependencies:
   build: ^2.0.0
   source_gen: ^1.4.0
   collection: ^1.17.1
-  lexer_builder_runtime: any
+  lexer_builder_runtime: ^0.1.0
 
 dependency_overrides: 
   lexer_builder_runtime:

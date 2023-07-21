@@ -35,8 +35,3 @@ See [the example](example) for detailed instructions.
 
 For more information about lexers in general, see the [flex](https://github.com/westes/flex) lexer generator and its [documentation](https://westes.github.io/flex/manual/).
 
-<!--
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
--->
