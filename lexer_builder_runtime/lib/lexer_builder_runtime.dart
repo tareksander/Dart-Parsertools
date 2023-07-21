@@ -5,3 +5,4 @@ library;
 export 'src/annotations.dart';
 export 'src/rule.dart';
 export 'src/exception.dart';
+export 'src/lexer.dart';

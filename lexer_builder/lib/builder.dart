@@ -4,6 +4,7 @@ library;
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
+import 'package:collection/collection.dart';
 import 'package:lexer_builder_runtime/lexer_builder_runtime.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -14,20 +15,22 @@ const _stateField = "state";
 const _startStateField = "startState";
 
 
-String toLiteral(String s) {
+String _toLiteral(String s) {
   return '"${s.replaceAll(r'\', r'\\').replaceAll('"', r'\"').replaceAll(r'$', r'\$')}"';
 }
 
 
-String ruleToString(Rule r, String method) {
-  return "LexerRule(RegExp(${toLiteral(r.pattern)}), $method, ${r.state})";
+String _ruleToString(Rule r, String method) {
+  return "LexerRule(RegExp(${_toLiteral(r.pattern)}), $method, ${r.state})";
 }
 
 
 
-
+/// Creates a SharedPartBuilder for the lexer generator.
 Builder lexerBuilder(BuilderOptions options) => SharedPartBuilder([LexerGenerator()], "lexer");
 
+
+/// Generates lexer classes for classes with the Lexer annotation.
 class LexerGenerator extends GeneratorForAnnotation<Lexer> {
   @override
   generateForAnnotatedElement(Element element, ConstantReader annotation, BuildStep buildStep) {
@@ -46,67 +49,34 @@ class LexerGenerator extends GeneratorForAnnotation<Lexer> {
             state: rule.getField(_stateField)!.toIntValue())));
       }
     }
-    //print(rules);
+    
     {
-      List<int> priorities = [];
       for (var r in rules) {
         if (r.$2.pattern.isEmpty) {
           throw InvalidGenerationSourceError("Rule has empty pattern: ${r.$1.name}");
         }
-        int priority = r.$2.priority;
-        if (priorities.contains(priority)) {
-          throw InvalidGenerationSourceError("2 Rules with priority $priority found.");
-        } else {
-          priorities.add(priority);
-        }
       }
     }
-    rules.sort((a, b) => b.$2.priority - a.$2.priority);
+    var ruleLists = rules.groupListsBy((e) => e.$2.priority);
+    List<int> priorities = ruleLists.keys.sorted((a, b) => b - a).toList();
     
-    String rulesString = "[${rules.map((e) => ruleToString(e.$2, e.$1.name)).reduce((value, element) => "$value, $element")}]";
+    String rulesString = "";
     
-    //print(rules);
-    String classCode = "abstract class _$classname<T extends Token> {\n";
-    for (var r in rules) {
-      classCode += "TokenResponse<T> ${r.$1.name}(String token);\n";
+    
+    for (int k in priorities) {
+      rulesString +=
+      "[${ruleLists[k]!.map((e) => _ruleToString(e.$2, e.$1.name)).reduce((value,
+          element) => "$value, $element")}],";
     }
-    classCode +=
-        "int _state = $startState;"
-        "List<T> tokenize(String source) {\n"
-        "int max(int a, int b) {if (a > b) {return a;} else {return b;}}\n"
-        "_state = $startState;\n"
-        "int index = 0;\n"
-        "int line = 1;\n"
-        "int char = 1;\n"
-        "List<T> tokens = [];\n"
-        "while (index < source.length) {\n"
-        "List<LexerRule<T>> rules = $rulesString;\n"
-        "List<int> lengths = rules.map((e)\n"
-        "{\n"
-        "if (e.state == _state || e.state == null)\n"
-        "{return (e.pattern.matchAsPrefix(source, index)?.end ?? index) - index;}\n"
-        "else {return 0;}\n"
-        "}\n"
-        ").toList();\n"
-        "while (true) {\n"
-        "if (lengths.isEmpty) throw LexerNoMatchException(index, line, char);\n"
-        "int maxLength = lengths.reduce(max);\n"
-        "if (maxLength == 0) throw LexerNoMatchException(index, line, char);\n"
-        "int matched = lengths.indexWhere((element) => element == maxLength);\n"
-        "Match m = rules[matched].pattern.matchAsPrefix(source, index)!;\n"
-        "TokenResponse<T> resp = rules[matched].action(m.group(0)!);\n"
-        "if (resp.type == TokenResponseType.reject) {lengths.removeAt(matched); rules.removeAt(matched); continue;}\n"
-        "index = m.end;\n"
-        "char += maxLength;\n"
-        "int lines = '\\n'.allMatches(m.group(0)!).length;\n"
-        "line += lines;\n"
-        "if (lines != 0) {char = m.group(0)!.length - m.group(0)!.lastIndexOf('\\n');}\n"
-        "if (resp.token != null) {tokens.add(resp.token!);}\n"
-        "break;\n"
-        "}\n"
-        "}\n"
-        "return tokens;\n"
-        "}\n";
+    rulesString = "[$rulesString]";
+    
+    
+    String classCode = "abstract class _$classname<T extends Token> extends LexerBase<T> {\n";
+    for (var r in rules) {
+      classCode += "TokenResponse<T> ${r.$1.name}(String token, int line, int char, int index);\n";
+    }
+    
+    classCode += "_$classname() : super($startState) {rules = $rulesString;}\n";
     
     
     classCode += "}";

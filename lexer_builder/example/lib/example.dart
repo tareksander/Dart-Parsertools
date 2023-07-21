@@ -27,30 +27,30 @@ class StringLexer extends _StringLexer<StringLexerToken> {
   @override
   // Rule specifies the method as a rule for the lexer.
   // The first parameter is the pattern that will cause the method to be executed if matched.
-  // The second parameter is a unique priority, to guarantee a consistent ordering of rules.
-  @Rule("[a-zA-Z0-9]+", 1)
-  TokenResponse<StringLexerToken> word(String s) {
+  // The second parameter is the priority, the highest rule that has a match is selected.
+  @Rule("[a-zA-Z0-9]+", 0)
+  TokenResponse<StringLexerToken> word(String token, int line, int char, int index) {
     // TokenResponse.accept accepts the match and can return a token to the token stream.
     // TokenResponse.reject would cause the lexer to find another matching rule for the input instead.
-    return TokenResponse.accept(StringLexerToken(s));
+    return TokenResponse.accept(StringLexerToken(token));
   }
   
   @override
   @Rule(r"\s+", 0)
-  TokenResponse<StringLexerToken> space(String s) {
+  TokenResponse<StringLexerToken> space(String token, int line, int char, int index) {
     // If null is passed, no token is placed in the token stream for this rule.
     return TokenResponse.accept(null);
   }
   
   @override
-  @Rule('"', 2)
-  TokenResponse<StringLexerToken> quote(String s) {
-    // The variable _state is defined by the generated class and lets you query and modify the lexer state.
+  @Rule('"', 1)
+  TokenResponse<StringLexerToken> quote(String token, int line, int char, int index) {
+    // The variable state is defined by the generated class and lets you query and modify the lexer state.
     // Here state 0 represents a word matching state and state 1 matches everything in double quotes, like a string literal.
-    if (_state == 0) {
-      _state = 1;
+    if (state == 0) {
+      state = 1;
     } else {
-      _state = 0;
+      state = 0;
     }
     return TokenResponse.accept(null);
   }
@@ -60,9 +60,9 @@ class StringLexer extends _StringLexer<StringLexerToken> {
   // The optional parameter state defines the state in which the rule will be considered for matching.
   // It defaults to null, which means the rule is considered in any state.
   // Here it is set to 1 to make this rule only match in the string literal state,
-  @Rule('[^"]+', 3, state: 1)
-  TokenResponse<StringLexerToken> wordQuoted(String s) {
-    return TokenResponse.accept(StringLexerToken(s));
+  @Rule('[^"]+', 1, state: 1)
+  TokenResponse<StringLexerToken> wordQuoted(String token, int line, int char, int index) {
+    return TokenResponse.accept(StringLexerToken(token));
   }
 
   
