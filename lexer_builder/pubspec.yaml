@@ -3,7 +3,7 @@ description: Generate lexer code from regular expression rules.
 version: 0.1.0
 repository: https://github.com/tareksander/Dart-Parsertools/tree/main/lexer_builder
 issue_tracker: https://github.com/tareksander/Dart-Parsertools/issues
-
+documentation: https://tareksander.github.io/Dart-Parsertools/lexer_builder/index.html
 
 environment:
   sdk: ^3.0.6
