@@ -16,7 +16,7 @@ const _startStateField = "startState";
 
 
 String _toLiteral(String s) {
-  return '"${s.replaceAll(r'\', r'\\').replaceAll('"', r'\"').replaceAll(r'$', r'\$').replaceAll("\n", "\\n")}"';
+  return '"${s.replaceAll(r'\', r'\\').replaceAll('"', r'\"').replaceAll(r'$', r'\$').replaceAll("\n", "\\n").replaceAll("\r", "\\r")}"';
 }
 
 

@@ -7,7 +7,7 @@ environment:
 
 
 dependencies:
-  lexer_builder_runtime: ^0.1.1
+  lexer_builder_runtime: ^0.1.0
 
 
 dev_dependencies:
@@ -15,7 +15,7 @@ dev_dependencies:
   test: ^1.21.0
   # lexer_builder and build_runner have to be included as dev_dependencies.
   # running `dart run build_runner build` generates the lexer again, use it after modifying the lexer annotations.
-  lexer_builder: ^0.1.0
+  lexer_builder: ^0.1.2
   build_runner: ^2.0.0
 
 
