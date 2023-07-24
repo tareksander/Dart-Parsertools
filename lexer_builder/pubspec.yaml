@@ -1,6 +1,6 @@
 name: lexer_builder
 description: Generate lexer code from regular expression rules.
-version: 0.1.0
+version: 0.1.1
 repository: https://github.com/tareksander/Dart-Parsertools/tree/main/lexer_builder
 issue_tracker: https://github.com/tareksander/Dart-Parsertools/issues
 documentation: https://tareksander.github.io/Dart-Parsertools/lexer_builder/index.html
