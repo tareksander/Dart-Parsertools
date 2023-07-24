@@ -14,12 +14,12 @@ abstract class _StringLexer<T extends Token> extends LexerBase<T> {
   _StringLexer() : super(0) {
     rules = [
       [
-        LexerRule(RegExp("\""), quote, null),
-        LexerRule(RegExp("[^\"]+"), wordQuoted, 1)
+        LexerRule(RegExp('"'), quote, null),
+        LexerRule(RegExp('[^"]+'), wordQuoted, 1)
       ],
       [
-        LexerRule(RegExp("[a-zA-Z0-9]+"), word, null),
-        LexerRule(RegExp("\\s+"), space, null)
+        LexerRule(RegExp('[a-zA-Z0-9]+'), word, null),
+        LexerRule(RegExp('\\s+'), space, null)
       ],
     ];
   }
