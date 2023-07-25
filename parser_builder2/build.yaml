@@ -1,0 +1,10 @@
+# Read about `build.yaml.old` at https://pub.dev/packages/build_config
+builders:
+  parser:
+    import: "package:parser_builder2/parser_builder2.dart"
+    builder_factories: ["parserBuilder"]
+    build_extensions: {".dart": ["parser.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
+  
